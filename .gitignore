@@ -1,0 +1,7 @@
+# Ignore these directories
+/venv   
+
+
+# Ignore these files
+
+safe.py
