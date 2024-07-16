@@ -1,9 +1,0 @@
-# Ignore these directories
-/venv   
-/__pycache__
-
-
-# Ignore these files
-
-safe.py
-files.db
