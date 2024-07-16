@@ -1,19 +1,34 @@
+import logging
+from helper_funtions import store_files
+
 from telegram import Bot, Update
 from safe import BOT_TOKEN
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes, Application
 
-TOKEN = 
+TOKEN = BOT_TOKEN
 
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 bot = Bot(TOKEN)
-
 
 #commands
 async def start(update:Update, context: ContextTypes) -> None:
     await context.bot.send_message(chat_id= update.effective_chat.id ,text='The bot is now online!')
 
 async def store(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await bot.send_message(chat_id=update.message.chat.id, text="Please send the files you want to store")
-    await collect_files(update, context)
+    await context.bot.send_message(chat_id=update.message.chat.id, text="Please send the files you want to store")
+    photo = update.message.photo
+
+    if photo:
+        incoming_file_id = photo.file_id
+        chat_id = update.message.chat_id
+        message_id = update.message.message_id
+        store_files(chat_id, message_id, incoming_file_id)
+
+    print('data saved to database')
+        
+        
     # await update.message
     # print(update.message)
    
@@ -21,20 +36,18 @@ async def store(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # message handles
 
-async def collect_files(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        document = update.message.document
-        unique_id = document.file_unique_id
-        print(document.file_unique_id)
-        chat_id = update.message.chat_id
-        # file_id = update.message.document.file_unique_id
-        # print(update.message)
+# async def collect_files(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     if update.message:
+#         document = update.message.document
+#         file_id = document.file_id
+#         await context.bot.send_message(chat_id=update.message.chat_id, text=file_id)
+#         chat_id = update.message.chat_id
+#         # file_id = update.message.document.file_unique_id
+#         # print(update.message)
 
-    else:
-        print('no update was recieved')
+    # else:
+    #     print('no update was recieved')
 
-def store_files():
-    pass
 
 
 
@@ -47,7 +60,7 @@ def main():
 
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('store', store))
-    app.add_handler(MessageHandler(filters.ALL, collect_files))
+    # app.add_handler(MessageHandler(filters.PHOTO and filters.VIDEO and filters.ATTACHMENT, collect_files))
 
     app.run_polling()
 
