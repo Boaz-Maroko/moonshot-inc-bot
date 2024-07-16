@@ -1,0 +1,7 @@
+# Ignore these directories
+/venv
+/__pycache__
+
+# Ignore these files
+userfiles.json
+safe.py
