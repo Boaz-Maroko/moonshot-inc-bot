@@ -1,5 +1,5 @@
 import logging
-from helper_funtions import append_json
+from helper_funtions import append_json, find_file
 
 from telegram import Bot, Update, helpers
 from safe import BOT_TOKEN
@@ -25,7 +25,16 @@ bot = Bot(TOKEN)
 # start command that does something will setup something later.
 
 async def start(update:Update, context: ContextTypes) -> None:
-    await context.bot.send_message(chat_id= update.effective_chat.id ,text='The bot is now online!')
+    chat_id = str(update.message.chat_id)
+    if context.args:
+        file_unique = str(context.args[0])
+        file_id = find_file(file_unique)
+        await context.bot.getFile(file_id)
+
+        await context.bot.send_document(chat_id=update.message.chat_id, document=file_id)
+
+    else:
+        await context.bot.send_message(chat_id= update.effective_chat.id ,text='The bot is now online!')
 
 # Command to store user files
 
@@ -68,16 +77,18 @@ async def handle_media_to_store(update: Update, context: ContextTypes.DEFAULT_TY
             chat_id = update.message.chat_id 
             message_id = update.message.message_id
             file_id = document.file_id
-            cows_are_cool = 'cows-are-cool'
-            link = helpers.create_deep_linked_url(context.bot.username, cows_are_cool, group=True)
+            file_unique = document.file_unique_id
+            link = helpers.create_deep_linked_url(context.bot.username, file_unique)
 
             data = {
-                str(chat_id): {
-                    "message_id": message_id,
-                    "file_id": file_id,
-                    "file_link": link
-                }
+                "chat_id": chat_id,
+                "file_unique": file_unique,
+                "file_id": file_id,
+                "file_link": link
+                    
             }
+            
+            
 
             append_json(data)
 
