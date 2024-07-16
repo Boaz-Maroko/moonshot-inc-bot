@@ -4,7 +4,7 @@ import os
 
 json_file_path = 'userfiles.json'
 
-def append_json(json_file_path, new_data):
+def append_json(new_data, json_file_path="userfiles.json"):
     
     if os.path.exists(json_file_path):
 
