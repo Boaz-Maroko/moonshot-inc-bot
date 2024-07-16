@@ -1,33 +1,21 @@
-import sqlite3
+import json
+import os
 
-db_path = 'files.db'
 
-def initialize_db():
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+json_file_path = 'userfiles.json'
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS userfiles (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   chat_id INTEGER NOT NULL,
-                   message_id INTEGER NOT NULL,
-                   file_id TEXT NOT NULL
-    )
-''')
+def append_json(json_file_path, new_data):
     
-    conn.commit()
-    conn.close()
+    if os.path.exists(json_file_path):
 
-def store_files(chat_id, message_id, file_id):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
 
-    cursor.execute('''
-        INSERT INTO userfiles (chat_id, message_id, file_id)
-                   VALUES (?, ?, ?)        
-    ''', (chat_id, message_id, file_id))
+    else:
+        data = []
+
+    data.append(new_data)
+
+    with open(json_file_path, 'w') as file:
+        json.dump(data, file, indent=4)
     
-    conn.commit()
-    conn.close()
-
-initialize_db()

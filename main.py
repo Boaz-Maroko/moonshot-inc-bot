@@ -20,13 +20,14 @@ async def store(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.message.chat.id, text="Please send the files you want to store")
     photo = update.message.photo
 
-    if photo:
+    if update.message.photo:
         incoming_file_id = photo.file_id
         chat_id = update.message.chat_id
         message_id = update.message.message_id
+        print(incoming_file_id, chat_id, message_id)
         store_files(chat_id, message_id, incoming_file_id)
 
-    print('data saved to database')
+        print('data saved to database')
         
         
     # await update.message
@@ -59,7 +60,7 @@ def main():
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler('start', start))
-    app.add_handler(CommandHandler('store', store))
+    app.add_handler(CommandHandler('store', store, filters=[filters.PHOTO, filters.TEXT]))
     # app.add_handler(MessageHandler(filters.PHOTO and filters.VIDEO and filters.ATTACHMENT, collect_files))
 
     app.run_polling()
