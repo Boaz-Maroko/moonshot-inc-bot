@@ -29,7 +29,7 @@ async def start(update:Update, context: ContextTypes) -> None:
     if context.args:
         file_unique = str(context.args[0])
         file_id = find_file(file_unique)
-        await context.bot.getFile(file_id)
+        # await context.bot.getFile(file_id)
 
         await context.bot.send_document(chat_id=update.message.chat_id, document=file_id)
 
@@ -64,6 +64,8 @@ async def handle_media_to_store(update: Update, context: ContextTypes.DEFAULT_TY
     # Check whether the user state is True
     if user_states[chat_id]:
 
+        print(update.message)
+
         # Get the file from the Update
 
         document = update.message.document
@@ -75,8 +77,11 @@ async def handle_media_to_store(update: Update, context: ContextTypes.DEFAULT_TY
 
             # This is the same as update.message.chat.id
             chat_id = update.message.chat_id 
-            message_id = update.message.message_id
+            # if update.message.media_group_id:
+            #     file_id = update.message.media_group_id
+            # else:
             file_id = document.file_id
+
             file_unique = document.file_unique_id
             link = helpers.create_deep_linked_url(context.bot.username, file_unique)
 
@@ -96,9 +101,13 @@ async def handle_media_to_store(update: Update, context: ContextTypes.DEFAULT_TY
 
             print('data saved to database')
 
+            await context.bot.send_message(chat_id=chat_id, text=reply_text)
+
             # Change the user state to False to ensure the end of the interaction.
 
-            return await context.bot.send_message(chat_id=chat_id, text=reply_text)
+            user_states[chat_id] = False
+
+            
         
 
 
